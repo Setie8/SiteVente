@@ -1,0 +1,30 @@
+﻿<script src="~/Content/Scripts/Cart.js"></script>
+@using SiteDeVente.Models
+@model SiteDeVente.Models.ShoppingCart
+
+<hr />
+<hr />
+<hr />
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th class="col-5" style="text-align: center"> Produit</th>
+                        <th class="col-2" style="text-align: center">Quantité</th>
+                        <th class="col-2" style="text-align: center">Prix</th>
+                        <th class="col-2" style="text-align: center">Prix Total</th>
+                        <th class="col-1"></th>
+                    </tr>
+                </thead>
+            </table>
+            <div id="partialCartList">
+                @{
+                    Html.RenderAction("CartList", "ShoppingCart");
+                }
+            </div>           
+        </div>
+    </div>
+</div>

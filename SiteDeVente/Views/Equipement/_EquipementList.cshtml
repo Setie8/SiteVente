@@ -1,0 +1,75 @@
+﻿@using SiteDeVente.Models
+@model SiteDeVente.Models.DataModel.SecteurEquipement
+
+@{
+    ShoppingCart session = (ShoppingCart)Session["ShoppingCart"];
+}
+@if (Model != null)
+{
+    <table class="table table-hover">
+        <tbody>
+            @foreach (Equipement equipement in Model.Equipements)
+            {
+                <tr>
+                    <td class="col-sm-8 col-md-6">
+                        <div class="media">
+                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="~/Content/Images/Equipement/@Model.Secteur.Name/@equipement.Image" style="width: 72px; height: 72px;"> </a>
+                            <div class="media-body">
+                                <h4 class="text-center">@equipement.Name</h4>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="col-sm-1 col-md-1" style="text-align: center">
+                        <div class="col-sm-1 col-md-1 text-center"><strong>@equipement.Price$</strong></div>
+                    </td>
+                    <td>  
+                        @Ajax.ActionLink("Ajouter", "AddToCart", "Equipement", new { equipementId = equipement.Id}, new AjaxOptions
+                        {
+                            HttpMethod = "POST",
+                            OnComplete = "ShowConfirmationModal"
+                        },  new { @class = "btn mr-1 btn-success btn-sm" })
+
+                        @Ajax.ActionLink("Enlever", "DeleteToCart", "Equipement", new { equipementId = equipement.Id}, new AjaxOptions
+                       {
+                           HttpMethod = "POST",
+                           OnComplete = "ShowConfirmationModal"
+                       },  new { @class = "btn btn-danger btn-sm" })
+
+                    </td>
+                    @if (session != null && session.User != null && session.User.Admin == true)
+                    {
+                        <td>
+                            @Ajax.ActionLink("Supprimer de la BD", "DeleteEquipement", "Equipement", new { equipementId = equipement.Id, secteurId = equipement.SecteurId }, new AjaxOptions
+                       {
+                           UpdateTargetId = "partialEquipementList",
+                           InsertionMode = InsertionMode.Replace,
+                           HttpMethod = "POST",
+                           Confirm = "Confirmer la Supression de " + equipement.Name + " ?"
+                       }, new { @class = "btn btn-dark btn-sm btn-block" })
+
+                            <a class="btn btn-warning btn-sm btn-block openUpdateModalbtn" data-toggle="modal" data-equipementName="@equipement.Name" data-equipementId="@equipement.Id"
+                                    data-equipementDescription="@equipement.Description" data-equipementPrice="@equipement.Price" data-secteurId="@equipement.SecteurId" data-equipementImage="@equipement.Image">
+                                Update
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Home")'">Accueil</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-success" onclick="location.href='@Url.Action("Index", "ShoppingCart")'">Panier</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+
+
+

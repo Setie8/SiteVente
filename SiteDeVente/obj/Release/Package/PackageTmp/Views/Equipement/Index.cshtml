@@ -1,0 +1,140 @@
+﻿<script src="~/Content/Scripts/Equipement.js"></script>
+@using SiteDeVente.Models;
+@model SiteDeVente.Models.Secteur
+
+@{
+    ShoppingCart session = (ShoppingCart)Session["ShoppingCart"];
+}
+
+<hr />
+<hr />
+<hr />
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <table class="table table-hover">
+                <thead>
+                    @if (session != null && session.User != null && session.User.Admin == true)
+                    {
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addEquipementModal">Ajouter un Article</button>
+                            </td>
+                        </tr>
+                    }
+                        <tr>
+                            <th>Produit</th>
+                            <th class="text-center">Prix</th>
+                            <th></th>
+                            @if (session != null && session.User != null && session.User.Admin == true)
+                            {
+                                <th class="text-sm-center">Gérer</th>
+                            }
+
+                            <th> </th>
+                        </tr>
+                </thead>
+            </table>
+            <div id="partialEquipementList">
+                @{
+                    Html.RenderAction("EquipementList", "Equipement", new { secteur = Model });
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="ConfirmationModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6 id="ConfirmationModalText"></h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="addEquipementModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Ajax.BeginForm("AddEquipement", "Equipement", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "partialEquipementList",
+                InsertionMode = InsertionMode.Replace,
+                Confirm = "Voulez-vous ajouter l'équipement ?",
+                OnSuccess = "CloseAddEquipementModal()"
+            }))
+            {
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ajouter un Équipement</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="secteurId" value="@Model.Id">
+                    <input type="hidden" name="secteurName" value="@Model.Name">
+                    <label for="name">Nom :</label>
+                    <input type="text" maxlength="50" class="form-control" name="equipementName" placeholder="Nom" required>
+                    <label for="price">Prix :</label>
+                    <input type="number" maxlength="6" class="form-control" name="equipementPriceString" placeholder="Prix" min="0" max="9999" value="0" step=".01" required>
+                    <label for="description">Description :</label>
+                    <textarea class="form-control" maxlength="100" name="equipementDescription" rows="3" placeholder="Description"></textarea>
+                    <label for="image">Nom de l'image :</label>
+                    <input type="text" maxlength="100" class="form-control" name="equipementImageName" placeholder="Nom de l'image" required>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group cart">
+                        <input type="submit" class="btn btn-success  mr-2" value="Ajouter" />
+                        <button type="button" class="btn btn-danger  mr-2" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="updateEquipementModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Ajax.BeginForm("UpdateEquipement", "Equipement", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "partialEquipementList",
+                InsertionMode = InsertionMode.Replace,
+                Confirm = "Voulez-vous mettre à jour l'équipement ?",
+                OnSuccess = "CloseUpdateEquipementModal()"
+            }))
+            {
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Mise à Jour</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="secteurId" id="modal-secteurId">
+                    <input type="hidden" name="equipementId" id="modal-equipementId">
+                    <label for="name">Nom :</label>
+                    <input type="text" maxlength="50" id="modal-equipementName" value="" class="form-control" name="equipementName" required>
+                    <label for="price">Prix :</label>
+                    <input type="number" maxlength="6" class="form-control" id="modal-equipementPrice" name="equipementPrice" max="9999" min="0" step=".01" required>
+                    <label for="description">Description :</label>
+                    <textarea class="form-control" data-maxlength="100" name="equipementDescription" id="modal-equipementDescription" rows="3"></textarea>
+                    <label for="image">Nom de l'image :</label>
+                    <input type="text" maxlength="100" class="form-control" id="modal-equipementImage" name="equipementImageName" required>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group cart">
+                        <input type="submit" class="btn btn-success  mr-2" value="Mettre à Jour" />
+                        <button type="button" class="btn btn-danger  mr-2" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

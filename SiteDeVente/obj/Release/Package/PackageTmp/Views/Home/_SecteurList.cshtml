@@ -1,0 +1,9 @@
+﻿@model List<SiteDeVente.Models.Secteur>
+@using SiteDeVente.Models
+@if (Model != null)
+{
+    foreach (Secteur sect in Model)
+    {
+        <a class="dropdown-item" href="@Url.Action("Index", "Equipement", new { secteurId = sect.Id, secteurName = sect.Name })">@sect.Name</a>
+    }
+}

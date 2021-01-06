@@ -1,0 +1,90 @@
+﻿
+@using SiteDeVente.Models
+@model SiteDeVente.Models.ShoppingCart
+@{
+    ShoppingCart session = (ShoppingCart)Session["ShoppingCart"];
+}
+@if (Model != null)
+{
+    <table class="table table-hover">
+        <tbody>
+            @foreach (Item item in Model.Items)
+            {
+                <tr class="row">
+                    <td class="col-5">
+                        <div class="media">
+                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="~/Content/Images/Equipement/@item.Secteur.Name/@item.Equipement.Image" style="width: 72px; height: 72px;"> </a>
+                            <div class="media-body">
+                                <h4 class="text-center">@item.Equipement.Name</h4>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="col-2" style="text-align: center">
+                        <div class="input-group">
+                            @Ajax.ActionLink("-", "RemoveOneToCart", "ShoppingCart", new { equipementId = item.Equipement.Id}, new AjaxOptions
+                            {
+                                UpdateTargetId = "partialCartList",
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST"
+                            },  new { @class = "btn btn-sm btn-danger" })
+                            <input type="text" readonly  id=@item.Id class="form-control" maxlength="2" value=@item.Quantity min="1">
+                            @Ajax.ActionLink("+", "AddToCart", "ShoppingCart", new { equipementId = item.Equipement.Id}, new AjaxOptions
+                            {
+                                UpdateTargetId = "partialCartList",
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "POST"
+                            },  new { @class = "btn btn-sm btn-success" }) 
+                        </div>
+                    </td>
+                    <td class="col-2" style="text-align: center">
+                        <strong>@item.Equipement.Price$</strong>
+                    </td>
+                    <td class="col-2" style="text-align: center">
+                        <strong>@item.GetTotalItemPrice()$</strong>
+                    </td>
+                    <td class="col-1">
+                        @Ajax.ActionLink("Enlever", "DeleteToCart", "ShoppingCart", new { equipementId = item.Equipement.Id}, new AjaxOptions
+                   {
+                       UpdateTargetId = "partialCartList",
+                       InsertionMode = InsertionMode.Replace,
+                       HttpMethod = "POST",
+                       OnComplete = "ShowConfirmationModal"
+                   },  new { @class = "btn btn-warning btn-sm" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table table-hover">
+        <tfoot>
+            <tr class="row">
+                <td class="col-8" style="text-align: center"></td>
+                <td class="col-2" style="text-align: center"><strong>Prix Total :</strong></td>
+                <td class="col-2" style="text-align: center"><span class="input-group-text">@Model.GetTotalCartPriceNoTx()$</span></td>
+            </tr>
+            <tr class="row">
+                <td class="col-8" style="text-align: center"></td>
+                <td class="col-2" style="text-align: center"><strong>Taxe :</strong></td>
+                <td class="col-2" style="text-align: center"><span class="input-group-text">@Model.GetTotalTaxe()$</span></td>
+            </tr>
+            <tr class="row">
+                <td class="col-8" style="text-align: center"></td>
+                <td class="col-2" style="text-align: center"><strong>Prix Total avec Taxe :</strong></td>
+                <td class="col-2" style="text-align: center"><span class="input-group-text">@Model.GetTotalCartPriceWithTx()$</span></td>                                
+            </tr>
+            <tr class="row">
+                <td class="col-2">
+                    <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Home")'">Accueil</button>
+                </td>
+                <td class="col-8" style="text-align: center"></td>
+                <td class="col-2">
+                    <button type="button" class="btn btn-success" onclick="">Confirmer l'achat</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+
+
+
